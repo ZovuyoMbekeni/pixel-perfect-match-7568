@@ -17,10 +17,10 @@ import { Loader2, Upload, ImageIcon, FileText, Sparkles, Download, Trash2, Flask
 export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
-      { title: "SentimentAI — Sentiment Analysis & Data Insights" },
-      { name: "description", content: "Classify comments, CSV reviews and screenshots as positive, negative or neutral with Hugging Face models, then explore charts and AI insights." },
-      { property: "og:title", content: "SentimentAI — Sentiment Analysis & Data Insights" },
-      { property: "og:description", content: "Real sentiment classification with Hugging Face, interactive charts and data-grounded AI insights." },
+      { title: "ToneCheck — Sentiment Analysis & Data Insights" },
+      { name: "description", content: "Classify comments, CSV reviews and screenshots as positive, negative or neutral with Hugging Face models, then explore charts and generated insights." },
+      { property: "og:title", content: "ToneCheck — Sentiment Analysis & Data Insights" },
+      { property: "og:description", content: "Real sentiment classification with Hugging Face, interactive charts and data-grounded insights." },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary" },
     ],
@@ -158,11 +158,11 @@ function App() {
 
   function exportCsv() {
     const csv = Papa.unparse(rows.map((r) => ({ text: r.text, sentiment: r.label, confidence: r.confidence.toFixed(4), source: r.source })));
-    download("sentimentai-results.csv", csv, "text/csv");
+    download("tonecheck-results.csv", csv, "text/csv");
   }
   function exportSummary() {
     const p = (n: number) => (stats.total ? ((n / stats.total) * 100).toFixed(1) : "0");
-    const txt = `SentimentAI summary — ${new Date().toLocaleString()}
+    const txt = `ToneCheck summary — ${new Date().toLocaleString()}
 Sentiment model: ${SENTIMENT_MODEL}
 
 Total comments: ${stats.total}
@@ -171,10 +171,10 @@ Negative: ${stats.Negative} (${p(stats.Negative)}%)
 Neutral: ${stats.Neutral} (${p(stats.Neutral)}%)
 Average confidence: ${pct(stats.avg)}
 
-AI insights:
+Generated insights:
 ${insights ? insights.map((i) => `- ${i}`).join("\n") : "(not generated)"}
 `;
-    download("sentimentai-summary.txt", txt, "text/plain");
+    download("tonecheck-summary.txt", txt, "text/plain");
   }
 
   const pieData = LABELS.map((l) => ({ name: l, value: stats[l] })).filter((d) => d.value);
@@ -186,7 +186,7 @@ ${insights ? insights.map((i) => `- ${i}`).join("\n") : "(not generated)"}
     <div className="min-h-screen">
       <header className="sticky top-0 z-20 border-b bg-background/90 backdrop-blur">
         <div className="mx-auto flex max-w-6xl flex-wrap items-center gap-x-6 gap-y-2 px-4 py-3">
-          <a href="#dashboard" className="font-display text-xl font-semibold">Sentiment<span className="text-primary">AI</span></a>
+          <a href="#dashboard" className="font-display text-xl font-semibold">Tone<span className="text-primary">Check</span></a>
           <nav className="flex flex-wrap gap-1 text-sm">
             {NAV.map((n) => (
               <a key={n} href={`#${slug(n)}`} className="rounded-md px-2.5 py-1 text-muted-foreground transition-colors hover:bg-secondary hover:text-foreground">{n}</a>
@@ -199,7 +199,7 @@ ${insights ? insights.map((i) => `- ${i}`).join("\n") : "(not generated)"}
         <section id="dashboard" className="scroll-mt-24 space-y-6">
           <div className="flex flex-wrap items-end justify-between gap-4">
             <div>
-              <p className="font-mono text-xs uppercase tracking-widest text-muted-foreground">Week 3 · AI Project</p>
+              <p className="font-mono text-xs uppercase tracking-widest text-muted-foreground">Week 3 · Data Project</p>
               <h1 className="mt-1 text-4xl font-semibold md:text-5xl">Sentiment & Data Insights</h1>
               <p className="mt-2 max-w-xl text-muted-foreground">Every prediction below comes live from <span className="font-mono text-sm">{SENTIMENT_MODEL}</span> on Hugging Face.</p>
             </div>
@@ -309,7 +309,7 @@ ${insights ? insights.map((i) => `- ${i}`).join("\n") : "(not generated)"}
           <div className="rounded-xl bg-ink p-6 text-ink-foreground md:p-8">
             <div className="flex flex-wrap items-center justify-between gap-3">
               <div>
-                <h2 className="text-3xl">AI Insights</h2>
+                <h2 className="text-3xl">Generated Insights</h2>
                 <p className="text-sm opacity-70">Written by a separate language model from the classified results — it does not change any sentiment labels.</p>
               </div>
               <Button variant="secondary" disabled={!!busy || !rows.length} onClick={makeInsights}>

@@ -79,7 +79,7 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
     meta: [
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
-      { title: "SentimentAI" },
+      { title: "ToneCheck" },
       { name: "description", content: "Sentiment analysis and data insights with Hugging Face." },
     ],
     links: [
