@@ -84,7 +84,7 @@ function App() {
     try {
       const { predictions } = await analyze({ data: { texts: clean } });
       const added = clean.map((text, i) => ({
-        id: nextId.current++, text, source, label: predictions[i].label, confidence: predictions[i].confidence,
+        id: nextId.current++, text, source, label: predictions[i]!.label, confidence: predictions[i]!.confidence,
       }));
       setRows((r) => [...added, ...r]);
       setInsights(null);
@@ -111,7 +111,7 @@ function App() {
         if (!fields.length || !res.data.length) { setError("The CSV appears to be empty."); return; }
         const pref = fields.find((f) => /comment|review|text|feedback|message|content|tweet|body/i.test(f));
         const avgLen = (f: string) => res.data.reduce((s, r) => s + (r[f]?.length ?? 0), 0) / res.data.length;
-        const column = pref ?? [...fields].sort((a, b) => avgLen(b) - avgLen(a))[0];
+        const column = pref ?? [...fields].sort((a, b) => avgLen(b) - avgLen(a))[0] ?? "";
         const texts = res.data.map((r) => r[column] ?? "").filter((t) => t.trim().length > 1);
         if (!column || !texts.length || avgLen(column) < 3) { setError("No suitable text/comment column was found in this CSV."); return; }
         if (texts.length > 500) toast.message("Only the first 500 rows will be analysed.");
@@ -265,7 +265,7 @@ ${insights ? insights.map((i) => `- ${i}`).join("\n") : "(not generated)"}
         <section id="analyse-text" className="scroll-mt-24 grid gap-6 md:grid-cols-2">
           <Panel title="Analyse one comment">
             <Textarea value={single} onChange={(e) => setSingle(e.target.value)} placeholder="Type or paste a comment..." rows={4} maxLength={2000} />
-            <Button className="mt-3" disabled={!!busy} onClick={async () => { const r = await run([single], "Single", "single"); if (r) setLastSingle(r[0]); }}>
+            <Button className="mt-3" disabled={!!busy} onClick={async () => { const r = await run([single], "Single", "single"); if (r?.[0]) setLastSingle(r[0]); }}>
               {busy === "single" ? <Loader2 className="animate-spin" /> : <FileText />} Analyse
             </Button>
             {lastSingle && (
