@@ -48,6 +48,7 @@ async function classifyBatch(texts: string[], key: string): Promise<Prediction[]
     const scores: Record<SentimentLabel, number> = { Positive: 0, Negative: 0, Neutral: 0 };
     for (const r of row) scores[normalise(r.label)] = r.score;
     const top = [...row].sort((a, b) => b.score - a.score)[0];
+    if (!top) throw new Error("The sentiment model returned an empty prediction.");
     return { label: normalise(top.label), confidence: top.score, scores };
   });
 }
