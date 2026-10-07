@@ -8,3 +8,8 @@
 > Commits you push to the connected branch sync back to Lovable and show up in
 > the editor, so keep the branch in a working state.
 <!-- LOVABLE:END -->
+
+## Architecture
+- All AI calls live in `src/lib/sentiment.functions.ts` server functions — keeps HUGGINGFACE_API_KEY / LOVABLE_API_KEY off the client.
+- Sentiment labels come only from Hugging Face; the LLM writes insights only — keeps classification and narration separate.
+- Analysis results stay in browser state, no database — privacy requirement (nothing stored).
