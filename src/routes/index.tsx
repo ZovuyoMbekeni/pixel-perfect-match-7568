@@ -103,7 +103,7 @@ function App() {
 
   function onCsv(file: File) {
     setError(null);
-    if (!/\.csv$/i.test(file.name)) { setError("Invalid file — please upload a .csv file."); return; }
+    if (!/\.(csv|txt|tsv)$/i.test(file.name) && !/csv|text\/plain|excel/i.test(file.type)) { setError("Invalid file — please upload a .csv file."); return; }
     Papa.parse<Record<string, string>>(file, {
       header: true, skipEmptyLines: true,
       complete: async (res) => {
