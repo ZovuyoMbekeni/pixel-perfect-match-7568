@@ -1,0 +1,1 @@
+- [x] Remove Hugging Face key requirement; use built-in service
