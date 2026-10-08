@@ -115,6 +115,14 @@ function App() {
         const isNumeric = (s: string) => /^[-\d.,\s:/]*$/.test(s);
         const body = data.length > 1 ? data.slice(1) : data;
         const avgLen = (i: number, rows: string[][]) => rows.reduce((s, r) => s + (isNumeric(r[i] ?? "") ? 0 : (r[i]?.length ?? 0)), 0) / rows.length;
+        // Plain list of comments (no header, commas inside text): use each whole line
+        if (prefIdx < 0 && new Set(data.map((r) => r.length)).size > 1) {
+          const lines = data.map((r) => r.filter(Boolean).join(", ")).filter((t) => t.length > 1 && !isNumeric(t));
+          if (lines.length > 500) toast.message("Only the first 500 rows will be analysed.");
+          setCsvInfo({ name: file.name, column: "Whole line", count: Math.min(lines.length, 500) });
+          await run(lines.slice(0, 500), "CSV", "csv");
+          return;
+        }
         let col = prefIdx;
         if (col < 0) {
           col = 0;
