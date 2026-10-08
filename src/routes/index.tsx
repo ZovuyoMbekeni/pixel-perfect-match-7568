@@ -103,7 +103,7 @@ function App() {
 
   function onCsv(file: File) {
     setError(null);
-    if (!/\.csv$/i.test(file.name)) { setError("Invalid file — please upload a .csv file."); return; }
+    if (!/\.(csv|txt|tsv)$/i.test(file.name) && !/csv|text\/plain|excel/i.test(file.type)) { setError("Invalid file — please upload a .csv file."); return; }
     Papa.parse<Record<string, string>>(file, {
       header: true, skipEmptyLines: true,
       complete: async (res) => {
@@ -287,7 +287,7 @@ ${insights ? insights.map((i) => `- ${i}`).join("\n") : "(not generated)"}
         <section id="upload-csv" className="scroll-mt-24 grid gap-6 md:grid-cols-2">
           <Panel title="Upload CSV">
             <p className="mb-3 text-sm text-muted-foreground">We detect the comment/review column automatically (up to 500 rows).</p>
-            <FilePick accept=".csv,text/csv" disabled={!!busy} onFile={onCsv} icon={<Upload />} label={busy === "csv" ? "Analysing..." : "Choose CSV file"} />
+            <FilePick accept=".csv,.txt,.tsv,text/csv,application/vnd.ms-excel" disabled={!!busy} onFile={onCsv} icon={<Upload />} label={busy === "csv" ? "Analysing..." : "Choose CSV file"} />
             {csvInfo && <p className="mt-3 text-sm">File <b>{csvInfo.name}</b> · column <b className="font-mono">{csvInfo.column}</b> · {csvInfo.count} rows</p>}
           </Panel>
           <div id="analyse-image" className="scroll-mt-24">
