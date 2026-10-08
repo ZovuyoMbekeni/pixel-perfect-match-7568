@@ -7,7 +7,7 @@ import {
   PieChart, Pie, Cell, ResponsiveContainer, Tooltip, BarChart, Bar, XAxis, YAxis, CartesianGrid,
 } from "recharts";
 import {
-  analyzeTexts, extractImageText, generateInsights, SENTIMENT_MODEL, VISION_MODEL,
+  analyzeTexts, extractImageText, generateInsights, SENTIMENT_MODEL,
   type SentimentLabel,
 } from "@/lib/sentiment.functions";
 import { Button } from "@/components/ui/button";
