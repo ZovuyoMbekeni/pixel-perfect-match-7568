@@ -104,16 +104,36 @@ function App() {
   function onCsv(file: File) {
     setError(null);
     if (!/\.(csv|txt|tsv)$/i.test(file.name) && !/csv|text\/plain|excel/i.test(file.type)) { setError("Invalid file — please upload a .csv file."); return; }
-    Papa.parse<Record<string, string>>(file, {
-      header: true, skipEmptyLines: true,
+    Papa.parse<string[]>(file, {
+      header: false, skipEmptyLines: "greedy",
       complete: async (res) => {
-        const fields = res.meta.fields ?? [];
-        if (!fields.length || !res.data.length) { setError("The CSV appears to be empty."); return; }
-        const pref = fields.find((f) => /comment|review|text|feedback|message|content|tweet|body/i.test(f));
-        const avgLen = (f: string) => res.data.reduce((s, r) => s + (r[f]?.length ?? 0), 0) / res.data.length;
-        const column = pref ?? [...fields].sort((a, b) => avgLen(b) - avgLen(a))[0] ?? "";
-        const texts = res.data.map((r) => r[column] ?? "").filter((t) => t.trim().length > 1);
-        if (!column || !texts.length || avgLen(column) < 3) { setError("No suitable text/comment column was found in this CSV."); return; }
+        const data = res.data.map((r) => (Array.isArray(r) ? r.map((c) => String(c ?? "").replace(/^\uFEFF/, "").trim()) : []));
+        if (!data.length) { setError("The CSV appears to be empty."); return; }
+        const width = Math.max(...data.map((r) => r.length));
+        const first = data[0]!;
+        const prefIdx = first.findIndex((f) => /comment|review|text|feedback|message|content|tweet|body|opinion|response|remark/i.test(f));
+        const isNumeric = (s: string) => /^[-\d.,\s:/]*$/.test(s);
+        const body = data.length > 1 ? data.slice(1) : data;
+        const avgLen = (i: number, rows: string[][]) => rows.reduce((s, r) => s + (isNumeric(r[i] ?? "") ? 0 : (r[i]?.length ?? 0)), 0) / rows.length;
+        // Plain list of comments (no header, commas inside text): use each whole line
+        if (prefIdx < 0 && new Set(data.map((r) => r.length)).size > 1) {
+          const lines = data.map((r) => r.filter(Boolean).join(", ")).filter((t) => t.length > 1 && !isNumeric(t));
+          if (lines.length > 500) toast.message("Only the first 500 rows will be analysed.");
+          setCsvInfo({ name: file.name, column: "Whole line", count: Math.min(lines.length, 500) });
+          await run(lines.slice(0, 500), "CSV", "csv");
+          return;
+        }
+        let col = prefIdx;
+        if (col < 0) {
+          col = 0;
+          for (let i = 1; i < width; i++) if (avgLen(i, body) > avgLen(col, body)) col = i;
+        }
+        // Treat first row as header only if it looks like one (short label, data below is longer)
+        const hasHeader = data.length > 1 && (prefIdx >= 0 || (first[col]?.length ?? 0) < 25 && avgLen(col, body) > (first[col]?.length ?? 0));
+        const rowsForText = hasHeader ? data.slice(1) : data;
+        const texts = rowsForText.map((r) => r[col] ?? "").filter((t) => t.length > 1 && !isNumeric(t));
+        const column = hasHeader ? first[col] || `Column ${col + 1}` : `Column ${col + 1}`;
+        if (!texts.length) { setError("No text was found in this CSV. Make sure one column contains the comments."); return; }
         if (texts.length > 500) toast.message("Only the first 500 rows will be analysed.");
         setCsvInfo({ name: file.name, column, count: Math.min(texts.length, 500) });
         await run(texts.slice(0, 500), "CSV", "csv");
