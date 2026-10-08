@@ -10,6 +10,6 @@
 <!-- LOVABLE:END -->
 
 ## Architecture
-- All AI calls live in `src/lib/sentiment.functions.ts` server functions — keeps HUGGINGFACE_API_KEY / LOVABLE_API_KEY off the client.
-- Sentiment labels come only from Hugging Face; the LLM writes insights only — keeps classification and narration separate.
+- All AI calls live in `src/lib/sentiment.functions.ts` server functions — keeps LOVABLE_API_KEY off the client.
+- Classification and insights are separate gateway calls; insights never reclassify — keeps labels and narration independent. No third-party keys required.
 - Analysis results stay in browser state, no database — privacy requirement (nothing stored).

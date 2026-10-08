@@ -18,9 +18,9 @@ export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
       { title: "ToneCheck — Sentiment Analysis & Data Insights" },
-      { name: "description", content: "Classify comments, CSV reviews and screenshots as positive, negative or neutral with Hugging Face models, then explore charts and generated insights." },
+      { name: "description", content: "Classify comments, CSV reviews and screenshots as positive, negative or neutral, then explore charts and generated insights." },
       { property: "og:title", content: "ToneCheck — Sentiment Analysis & Data Insights" },
-      { property: "og:description", content: "Real sentiment classification with Hugging Face, interactive charts and data-grounded insights." },
+      { property: "og:description", content: "Sentiment classification, interactive charts and data-grounded insights." },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary" },
     ],
@@ -201,7 +201,7 @@ ${insights ? insights.map((i) => `- ${i}`).join("\n") : "(not generated)"}
             <div>
               <p className="font-mono text-xs uppercase tracking-widest text-muted-foreground">Week 3 · Data Project</p>
               <h1 className="mt-1 text-4xl font-semibold md:text-5xl">Sentiment & Data Insights</h1>
-              <p className="mt-2 max-w-xl text-muted-foreground">Every prediction below comes live from <span className="font-mono text-sm">{SENTIMENT_MODEL}</span> on Hugging Face.</p>
+              <p className="mt-2 max-w-xl text-muted-foreground">Every prediction below is generated live for your text.</p>
             </div>
             <div className="flex flex-wrap gap-2">
               <Button variant="outline" onClick={() => run(SAMPLE, "Sample", "sample")} disabled={!!busy}>
@@ -292,7 +292,7 @@ ${insights ? insights.map((i) => `- ${i}`).join("\n") : "(not generated)"}
           </Panel>
           <div id="analyse-image" className="scroll-mt-24">
             <Panel title="Analyse image">
-              <p className="mb-3 text-sm text-muted-foreground">JPG/PNG screenshots of comments. Text is read by <span className="font-mono">{VISION_MODEL}</span> on Hugging Face.</p>
+              <p className="mb-3 text-sm text-muted-foreground">JPG/PNG screenshots of comments. Text is read from the image automatically.</p>
               <FilePick accept="image/png,image/jpeg" disabled={!!busy} onFile={onImage} icon={<ImageIcon />} label={busy === "image" ? "Reading image..." : "Choose image"} />
               {imgPreview && <img src={imgPreview} alt="Uploaded" className="mt-3 max-h-48 rounded-md border object-contain" />}
               {extracted && extracted.length > 0 && (
@@ -352,7 +352,7 @@ ${insights ? insights.map((i) => `- ${i}`).join("\n") : "(not generated)"}
           <div>
             <h2 className="text-3xl">About the project</h2>
             <p className="mt-3 text-muted-foreground">This project demonstrates how artificial intelligence can be used to analyse text data, classify sentiment and generate useful insights from user-provided information.</p>
-            <p className="mt-3 text-muted-foreground">Sentiment classification uses the Hugging Face model <span className="font-mono">{SENTIMENT_MODEL}</span>, a RoBERTa transformer fine-tuned on ~124M tweets. Image text is read by <span className="font-mono">{VISION_MODEL}</span> via Hugging Face. Insights are written by a separate language model.</p>
+            <p className="mt-3 text-muted-foreground">Sentiment classification, image text reading and insights all run on the built-in language model <span className="font-mono">{SENTIMENT_MODEL}</span>. Insights are written in a separate step from classification.</p>
           </div>
           <div className="rounded-xl border bg-card p-5 text-sm">
             <h3 className="text-lg">Privacy</h3>
